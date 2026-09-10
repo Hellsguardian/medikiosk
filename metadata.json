@@ -1,0 +1,6 @@
+{
+  "name": "MediKiosk",
+  "description": "Your Health Companion - Patient-facing digital health record and AI-powered clinical intake platform.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

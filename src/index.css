@@ -1,0 +1,129 @@
+@import "tailwindcss";
+
+:root {
+  /* Sidebar responsive width tokens */
+  --sidebar-expanded-width: clamp(250px, 18vw, 300px);
+  --sidebar-collapsed-width: 101px;
+  --sidebar-collapsed-mobile-width: 88px;
+
+  /* ========================================================
+     MEDIKIOSK TARGET PALETTE (MUTED INDIGO / PERIWINKLE / SOFT LAVENDER / DUSTY PINK)
+     Soft, elegant, calm and premium color system.
+     ======================================================== */
+
+  /* 1. PRIMARY INDIGO: Main sidebar surface, primary action text, key icons */
+  --mk-primary-purple: #4C499E;
+  --mk-primary-dark: #4C499E;
+  --mk-primary: #4C499E;
+
+  /* 2. SECONDARY INDIGO: Secondary surfaces, subtle active states, icon highlights */
+  --mk-secondary-purple: #5A57B3;
+  --mk-primary-hover: #5A57B3;
+
+  /* 3. PRIMARY CARD INDIGO: Muted indigo tones for the hero card */
+  --mk-card-indigo: #6D6AC6;
+  --mk-card-gradient-start: #5C59B7;
+  --mk-card-gradient-mid: #6D6AC6;
+  --mk-card-gradient-end: #7471CB;
+  --mk-light-purple: #817EC1;
+  --mk-primary-light: #817EC1;
+  --mk-accent-periwinkle: #A9A7DE;
+
+  /* 4. LIGHT PERIWINKLE & PAGE BACKGROUND: Subtle cool periwinkle atmosphere */
+  --mk-page-background: #EDEEF8;
+  --mk-bg: #EDEEF8;
+  --mk-periwinkle: #C7CBF3;
+
+  /* 5. LIGHT LAVENDER: Search fields, filter controls, secondary surfaces, subtle containers */
+  --mk-card-background: #F0F1FA;
+  --mk-surface-secondary: #F0F1FA;
+  --mk-surface-tint: #F0F1FA;
+
+  /* 6. WHITE: Primary content surfaces, major cards, clean sections, white buttons */
+  --mk-surface: #FFFFFF;
+
+  /* 7. SOFT PINK: Dusty/mauve pink for CTA accents, selected states, medical accent icons */
+  --mk-accent-pink: #CC76AC;
+  --mk-accent-pink-hover: #BD659B;
+
+  /* 8. PALE PINK: New Consultation card background, subtle pink surfaces */
+  --mk-light-pink: #F9E3F3;
+  --mk-light-pink-soft: #FDF3FA;
+
+  /* 9. PRIMARY TEXT: Deep muted indigo-black */
+  --mk-text-primary: #2E2C3A;
+
+  /* 10. SECONDARY TEXT: Descriptions, metadata, dates, supporting info, placeholders */
+  --mk-text-secondary: #8B8BA5;
+  --mk-text-muted: #8B8BA5;
+
+  /* Lavender tints & borders */
+  --mk-lavender-pale: #E5E5F0;
+  --mk-lavender-light: #F0F1FA;
+  --mk-lavender-soft: #817EC1;
+  --mk-border: #E5E5F0;
+  --mk-border-light: #E2E2EE;
+  --mk-shadow: 0 4px 20px -2px rgba(76, 73, 158, 0.08);
+}
+
+@theme {
+  --color-mk-primary-purple: var(--mk-primary-purple);
+  --color-mk-secondary-purple: var(--mk-secondary-purple);
+  --color-mk-light-purple: var(--mk-light-purple);
+  --color-mk-primary-dark: var(--mk-primary-dark);
+  --color-mk-primary: var(--mk-primary);
+  --color-mk-primary-hover: var(--mk-primary-hover);
+  --color-mk-primary-light: var(--mk-primary-light);
+  --color-mk-page-background: var(--mk-page-background);
+  --color-mk-bg: var(--mk-page-background);
+  --color-mk-card-background: var(--mk-card-background);
+  --color-mk-surface: var(--mk-surface);
+  --color-mk-surface-secondary: var(--mk-surface-secondary);
+  --color-mk-surface-tint: var(--mk-surface-tint);
+  --color-mk-accent-pink: var(--mk-accent-pink);
+  --color-mk-accent-pink-hover: var(--mk-accent-pink-hover);
+  --color-mk-light-pink: var(--mk-light-pink);
+  --color-mk-light-pink-soft: var(--mk-light-pink-soft);
+  --color-mk-text-primary: var(--mk-text-primary);
+  --color-mk-text-secondary: var(--mk-text-secondary);
+  --color-mk-text-muted: var(--mk-text-muted);
+  --color-mk-lavender-pale: var(--mk-lavender-pale);
+  --color-mk-lavender-light: var(--mk-lavender-light);
+  --color-mk-lavender-soft: var(--mk-lavender-soft);
+  --color-mk-border: var(--mk-border);
+  --color-mk-border-light: var(--mk-border-light);
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--mk-page-background);
+  color: var(--mk-text-primary);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* Custom soft scrollbars */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--mk-lavender-pale);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--mk-primary-light);
+}
+
