@@ -127,3 +127,104 @@ body {
   background: var(--mk-primary-light);
 }
 
+/* ========================================================
+   RESPONSIVE CONSULTATION WORKSPACE CONTAINER
+   - Mobile (<768px): fluid full-width with comfortable gutters
+   - Tablet / iPad Mini (768px), iPad Air (820px), iPad Pro (1024px), Landscape (1180-1194px):
+     fluid expansion up to 960px to avoid large empty side margins
+   - Desktop (>=1366px): exact approved desktop container width (48rem / 768px / max-w-3xl)
+   ======================================================== */
+.consultation-responsive-container {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 767px) {
+  .consultation-responsive-container {
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1365px) {
+  .consultation-responsive-container {
+    max-width: min(100%, 960px);
+  }
+}
+
+@media (min-width: 1366px) {
+  .consultation-responsive-container {
+    max-width: 48rem;
+  }
+}
+
+/* ========================================================
+   RESPONSIVE BODY ILLUSTRATION CANVAS (STAGE 3)
+   - Mobile (<640px): 310px max-width, 390px height
+   - Small tablet (640px-767px): 310px max-width, 420px height
+   - iPad Mini (768px) & iPad Air (820px): preserved 310px max-width, 420px height
+   - iPad Pro (1024px to 1365px): controlled compact size (max-width: 210px, height: 340px, max-height: 350px)
+     so the human body remains visually compact, centered, and flanked by generous whitespace
+   - Desktop (>=1366px): exact approved desktop dimensions (310px max-width, 430px height)
+   ======================================================== */
+.consultation-body-canvas {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.consultation-body-canvas svg {
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  margin-inline: auto;
+}
+
+@media (max-width: 639px) {
+  .consultation-body-canvas {
+    max-width: 310px;
+    height: 390px;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 767px) {
+  .consultation-body-canvas {
+    max-width: 310px;
+    height: 420px;
+  }
+}
+
+/* iPad Mini (768px) & iPad Air (820px): preserved appearance */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .consultation-body-canvas {
+    max-width: 310px;
+    height: 420px;
+  }
+}
+
+/* iPad Pro (1024px to 1365px, including 1024x1366 portrait & tablet landscape):
+   Controlled, compact size with generous vertical & horizontal whitespace */
+@media (min-width: 1024px) and (max-width: 1365px) {
+  .consultation-body-canvas {
+    width: min(100%, 210px);
+    max-width: 210px;
+    height: 340px;
+    max-height: 350px;
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+}
+
+/* Desktop (1366px and wider): exact approved desktop dimensions */
+@media (min-width: 1366px) {
+  .consultation-body-canvas {
+    max-width: 310px;
+    height: 430px;
+  }
+}
+

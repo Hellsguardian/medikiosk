@@ -82,17 +82,17 @@ export const EpisodeDetailModal: React.FC<EpisodeDetailModalProps> = ({
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex items-center px-6 border-b border-mk-border-light bg-white gap-2 pt-2">
+        <div className="flex items-center px-4 sm:px-6 border-b border-mk-border-light bg-white gap-2 pt-2 overflow-x-auto whitespace-nowrap">
           {[
-            { id: 'overview', label: 'Overview', icon: <Sparkles className="w-4 h-4" strokeWidth={1.8} /> },
-            { id: 'reports', label: `Reports (${episode.reports.length})`, icon: <FileText className="w-4 h-4" strokeWidth={1.8} /> },
-            { id: 'prescriptions', label: `Prescriptions (${episode.prescriptions.length})`, icon: <Pill className="w-4 h-4" strokeWidth={1.8} /> },
-            { id: 'visits', label: `Visits (${episode.visits.length})`, icon: <Clock className="w-4 h-4" strokeWidth={1.8} /> },
+            { id: 'overview', label: 'Overview', icon: <Sparkles className="w-4 h-4 flex-shrink-0" strokeWidth={1.8} /> },
+            { id: 'reports', label: `Reports (${episode.reports.length})`, icon: <FileText className="w-4 h-4 flex-shrink-0" strokeWidth={1.8} /> },
+            { id: 'prescriptions', label: `Prescriptions (${episode.prescriptions.length})`, icon: <Pill className="w-4 h-4 flex-shrink-0" strokeWidth={1.8} /> },
+            { id: 'visits', label: `Visits (${episode.visits.length})`, icon: <Clock className="w-4 h-4 flex-shrink-0" strokeWidth={1.8} /> },
           ].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`flex items-center gap-2 py-3 px-4 text-xs font-semibold border-b-2 transition -mb-px ${
+              className={`flex items-center gap-2 py-2.5 sm:py-3 px-3 sm:px-4 text-xs font-semibold border-b-2 transition -mb-px flex-shrink-0 ${
                 activeTab === tab.id
                   ? 'border-mk-primary text-mk-primary-dark'
                   : 'border-transparent text-mk-text-secondary hover:text-mk-text-primary'
@@ -105,7 +105,7 @@ export const EpisodeDetailModal: React.FC<EpisodeDetailModalProps> = ({
         </div>
 
         {/* Modal Body with smooth scrolling */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6 text-mk-text-primary">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5 sm:space-y-6 text-mk-text-primary">
           {/* TAB 1: OVERVIEW */}
           {activeTab === 'overview' && (
             <div className="space-y-5 animate-in fade-in duration-150">

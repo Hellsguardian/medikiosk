@@ -17,7 +17,7 @@ export const CurrentTreatmentCard: React.FC<CurrentTreatmentCardProps> = ({
   return (
     <div
       id="current-treatment-hero-card"
-      className="group relative overflow-hidden rounded-[24px] sm:rounded-[26px] text-white p-6 sm:p-7 lg:p-8 border border-white/24 shadow-[0_16px_35px_rgba(49,45,120,0.22),0_4px_14px_rgba(49,45,120,0.12),inset_0_1px_1px_0_rgba(255,255,255,0.36)] transition-all duration-500"
+      className="group relative overflow-hidden rounded-[22px] sm:rounded-[26px] text-white p-4.5 xs:p-5 sm:p-7 lg:p-8 border border-white/24 shadow-[0_16px_35px_rgba(49,45,120,0.22),0_4px_14px_rgba(49,45,120,0.12),inset_0_1px_1px_0_rgba(255,255,255,0.36)] transition-all duration-500"
       style={{
         background:
           'linear-gradient(110deg, #4C499E 0%, #5754AD 35%, #6864BF 65%, #7773C9 100%)',
@@ -236,9 +236,179 @@ export const CurrentTreatmentCard: React.FC<CurrentTreatmentCardProps> = ({
       </div>
 
       {/* ──────────────────────────────────────────────────────────── */}
-      {/* MAIN CARD CONTENT CONTAINER */}
+      {/* MOBILE SPECIFIC LAYOUT (< 768px): STRICT ISOLATED HIERARCHY */}
       {/* ──────────────────────────────────────────────────────────── */}
-      <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6 lg:gap-8">
+      <div className="relative z-10 md:hidden flex flex-col gap-4">
+        {/* 1. Floating Status Badge */}
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.14] backdrop-blur-md text-[10.5px] font-bold tracking-wider uppercase text-white/95 border border-white/28 shadow-[inset_0_1px_1px_rgba(255,255,255,0.35),0_4px_12px_rgba(40,30,85,0.18)] self-start">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#C7CBF3] opacity-60"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#C7CBF3] shadow-[0_0_8px_#C7CBF3]"></span>
+          </span>
+          <span>CURRENT TREATMENT</span>
+        </div>
+
+        {/* 2. Condition Title & Icon */}
+        <div className="flex items-center gap-3">
+          <div className="w-11 h-11 rounded-2xl bg-white/[0.16] border border-white/28 flex items-center justify-center text-white shadow-[inset_0_1px_1px_rgba(255,255,255,0.35),0_4px_14px_rgba(40,30,85,0.18)] backdrop-blur-md flex-shrink-0">
+            <LiverIconSmall className="w-5.5 h-5.5 text-[#C7CBF3] drop-shadow-[0_2px_4px_rgba(40,30,85,0.25)]" />
+          </div>
+          <div>
+            <h2 className="text-[22px] font-bold tracking-tight text-white leading-tight drop-shadow-[0_2px_4px_rgba(30,20,70,0.18)]">
+              {episode.condition}
+            </h2>
+            <p className="text-xs text-white/85 font-normal mt-0.5">
+              Treatment started on {episode.startDate}
+            </p>
+          </div>
+        </div>
+
+        {/* 3. Description */}
+        <p className="text-xs text-white/85 leading-relaxed font-normal">
+          Undergoing treatment for jaundice. Keep your follow-ups and complete medications as advised by your doctor.
+        </p>
+
+        {/* 4. Action Buttons (Stacked / Touch Friendly) */}
+        <div className="flex flex-col sm:flex-row gap-2.5 pt-1">
+          <button
+            id="mobile-view-treatment-details-btn"
+            onClick={onViewDetails}
+            className="w-full h-11 rounded-xl bg-white text-[#4C499E] font-semibold text-xs shadow-[0_4px_14px_rgba(40,30,85,0.22),inset_0_1px_0_rgba(255,255,255,0.95)] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <span>View Treatment Details</span>
+            <ArrowRight className="w-4 h-4" strokeWidth={2} />
+          </button>
+
+          <button
+            id="mobile-view-treatment-prescriptions-btn"
+            onClick={onViewPrescriptions}
+            className="w-full h-11 rounded-xl bg-white/[0.14] active:scale-[0.98] text-white font-medium text-xs border border-white/26 backdrop-blur-md shadow-[inset_0_1px_1px_rgba(255,255,255,0.28),0_4px_14px_rgba(40,30,85,0.14)] transition-all flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <FileText className="w-4 h-4 text-white/90" strokeWidth={1.8} />
+            <span>View Prescriptions</span>
+          </button>
+        </div>
+
+        {/* 5. Centered Liver Illustration (Dedicated Container, attractive, no text cover) */}
+        <div
+          aria-hidden="true"
+          className="relative flex items-center justify-center my-2 py-3 pointer-events-none select-none"
+        >
+          {/* Luminous layered lavender halo */}
+          <div
+            className="absolute w-[220px] h-[220px] rounded-full pointer-events-none blur-2xl"
+            style={{
+              background:
+                'radial-gradient(circle, rgba(183, 178, 244, 0.25) 0%, rgba(143, 136, 230, 0.16) 40%, rgba(92, 86, 184, 0.08) 65%, transparent 80%)',
+              animation: 'treatmentAuraPulse 9s ease-in-out infinite',
+            }}
+          />
+          {/* Concentric rings */}
+          <svg
+            className="absolute w-[220px] h-[220px] opacity-25"
+            viewBox="0 0 220 220"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle cx="110" cy="110" r="100" stroke="white" strokeWidth="1" strokeDasharray="3 6" />
+            <circle cx="110" cy="110" r="70" stroke="#C7CBF3" strokeWidth="1" strokeOpacity="0.6" />
+          </svg>
+
+          {/* Scaled Liver image */}
+          <div
+            className="relative flex items-center justify-center"
+            style={{
+              maskImage:
+                'linear-gradient(to bottom, transparent 0%, black 9%, black 91%, transparent 100%)',
+              WebkitMaskImage:
+                'linear-gradient(to bottom, transparent 0%, black 9%, black 91%, transparent 100%)',
+            }}
+          >
+            <img
+              src="/assets/liver.png?v=3"
+              alt="3D Holographic Liver Anatomy"
+              className="w-44 xs:w-48 max-w-[200px] h-auto max-h-[155px] object-contain"
+              style={{
+                filter:
+                  'drop-shadow(0 12px 24px rgba(35, 25, 80, 0.40)) drop-shadow(0 0 26px rgba(183, 178, 244, 0.24)) drop-shadow(0 2px 8px rgba(183, 178, 244, 0.18))',
+              }}
+            />
+          </div>
+        </div>
+
+        {/* 6. Statistics Panel (Clean, full width glassmorphic card) */}
+        <div
+          className="w-full rounded-[20px] p-4 space-y-3"
+          style={{
+            background: 'rgba(255, 255, 255, 0.10)',
+            backdropFilter: 'blur(18px)',
+            WebkitBackdropFilter: 'blur(18px)',
+            border: '1px solid rgba(255, 255, 255, 0.22)',
+            boxShadow:
+              '0 8px 24px rgba(26, 20, 84, 0.16), inset 0 1px 0 0 rgba(255, 255, 255, 0.12)',
+          }}
+        >
+          {/* Stat Row 1: Last Visit */}
+          <div className="flex items-center justify-between text-left">
+            <div className="flex items-center gap-2.5">
+              <div
+                className="w-8 h-8 rounded-full flex items-center justify-center text-white flex-shrink-0"
+                style={{
+                  background: 'rgba(183, 178, 244, 0.18)',
+                  border: '1px solid rgba(255, 255, 255, 0.25)',
+                }}
+              >
+                <Calendar className="w-3.5 h-3.5 text-white" strokeWidth={1.9} />
+              </div>
+              <span className="text-xs font-medium text-white/80">Last Visit</span>
+            </div>
+            <span className="text-xs font-bold text-white">09 Sep 2026</span>
+          </div>
+
+          <div className="border-t border-white/12" />
+
+          {/* Stat Row 2: Total Visits */}
+          <div className="flex items-center justify-between text-left">
+            <div className="flex items-center gap-2.5">
+              <div
+                className="w-8 h-8 rounded-full flex items-center justify-center text-white flex-shrink-0"
+                style={{
+                  background: 'rgba(183, 178, 244, 0.18)',
+                  border: '1px solid rgba(255, 255, 255, 0.25)',
+                }}
+              >
+                <Users className="w-3.5 h-3.5 text-white" strokeWidth={1.9} />
+              </div>
+              <span className="text-xs font-medium text-white/80">Total Visits</span>
+            </div>
+            <span className="text-xs font-bold text-white">{episode.visitCount}</span>
+          </div>
+
+          <div className="border-t border-white/12" />
+
+          {/* Stat Row 3: Reports */}
+          <div className="flex items-center justify-between text-left">
+            <div className="flex items-center gap-2.5">
+              <div
+                className="w-8 h-8 rounded-full flex items-center justify-center text-white flex-shrink-0"
+                style={{
+                  background: 'rgba(183, 178, 244, 0.18)',
+                  border: '1px solid rgba(255, 255, 255, 0.25)',
+                }}
+              >
+                <FileText className="w-3.5 h-3.5 text-white" strokeWidth={1.9} />
+              </div>
+              <span className="text-xs font-medium text-white/80">Reports</span>
+            </div>
+            <span className="text-xs font-bold text-white">{episode.reportCount}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* ──────────────────────────────────────────────────────────── */}
+      {/* TABLET & DESKTOP LAYOUT (md and above: UNTOUCHED & LOCKED)   */}
+      {/* ──────────────────────────────────────────────────────────── */}
+      <div className="relative z-10 hidden md:flex flex-col lg:flex-row lg:items-center justify-between gap-6 lg:gap-8">
         {/* ── ZONE 1: LEFT TREATMENT INFORMATION & ACTIONS ── */}
         <div className="flex-1 max-w-xl flex flex-col justify-between">
           {/* Floating Status Badge */}

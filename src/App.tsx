@@ -7,6 +7,7 @@ import {
 } from './data/mockData';
 import { NavTab, MedicalEpisode, MedicalReport, Appointment, ConsultationIntake } from './types';
 import { Sidebar } from './components/Sidebar';
+import { MobileSidebarDrawer } from './components/MobileSidebarDrawer';
 import { Header } from './components/Header';
 import { CurrentTreatmentCard } from './components/CurrentTreatmentCard';
 import { NewConsultationCard } from './components/NewConsultationCard';
@@ -30,48 +31,139 @@ import { DocumentsView } from './components/views/DocumentsView';
 import { PrescriptionsView } from './components/views/PrescriptionsView';
 import { AppointmentsView } from './components/views/AppointmentsView';
 
+// Dedicated Full-Page Consultation Experience
+import { ConsultationPage } from './components/consultation/ConsultationPage';
+
+// Dedicated Authentication Experience (Sign In / Create Account)
+import { AuthPage, AuthSuccessPayload } from './components/auth/AuthPage';
+
+type ScreenCategory = 'mobile' | 'tablet' | 'desktop';
+
+const getScreenCategory = (width: number): ScreenCategory => {
+  if (width < 768) return 'mobile';
+  if (width < 1200) return 'tablet';
+  return 'desktop';
+};
+
+const getDefaultSidebarCollapsed = (category: ScreenCategory): boolean => {
+  // Desktop (>= 1200px): Default EXPANDED (collapsed = false)
+  // iPad / Tablet (768px - 1199px): Default COLLAPSED (collapsed = true)
+  // Mobile (< 768px): Default COLLAPSED (hidden in normal flow, collapsed = true)
+  return category !== 'desktop';
+};
+
 export default function App() {
   const [activeTab, setActiveTab] = useState<NavTab>('home');
   const [globalSearch, setGlobalSearch] = useState('');
 
-  // Breakpoint-aware sidebar state:
-  // Desktop (>= 1200px): Default EXPANDED (collapsed = false)
-  // iPad / Tablet (768px - 1199px): Default COLLAPSED (collapsed = true)
-  // Mobile (< 768px): Default COLLAPSED (collapsed = true)
+  // 1. Responsive Screen Category State:
+  // - 'mobile': < 768px
+  // - 'tablet': 768px - 1199px
+  // - 'desktop': >= 1200px
+  const [screenCategory, setScreenCategory] = useState<ScreenCategory>(() => {
+    if (typeof window !== 'undefined') {
+      return getScreenCategory(window.innerWidth);
+    }
+    return 'desktop';
+  });
+
+  // 2. Sidebar Collapsed State:
+  // Automatically synchronized to screen category defaults:
+  // - Desktop: EXPANDED (collapsed = false)
+  // - Tablet: COLLAPSED (collapsed = true)
+  // - Mobile: COLLAPSED / Off-canvas drawer (collapsed = true)
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
-      return window.innerWidth < 1200;
+      return getDefaultSidebarCollapsed(getScreenCategory(window.innerWidth));
     }
     return false;
   });
 
-  const [isMobileScreen, setIsMobileScreen] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      return window.innerWidth < 768;
-    }
-    return false;
-  });
+  // Mobile off-canvas drawer visibility (< 768px)
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
-  const userManuallyToggledRef = React.useRef(false);
+  // Track active category to detect breakpoint transitions without flickering
+  const currentCategoryRef = React.useRef<ScreenCategory>(screenCategory);
 
   React.useEffect(() => {
-    const handleResize = () => {
-      const isMobile = window.innerWidth < 768;
-      setIsMobileScreen(isMobile);
+    const updateCategory = () => {
+      if (typeof window === 'undefined') return;
+      const width = window.innerWidth;
+      const newCategory = getScreenCategory(width);
 
-      // Only auto-update collapsed state if user hasn't explicitly toggled it manually
-      if (!userManuallyToggledRef.current) {
-        setSidebarCollapsed(window.innerWidth < 1200);
+      // Only transition when the viewport crosses a breakpoint category boundary
+      if (newCategory !== currentCategoryRef.current) {
+        currentCategoryRef.current = newCategory;
+        setScreenCategory(newCategory);
+        // Reset to category default whenever screen category changes
+        setSidebarCollapsed(getDefaultSidebarCollapsed(newCategory));
+        setMobileDrawerOpen(false);
       }
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    // matchMedia queries for instant, zero-re-render breakpoint notifications
+    const mobileQuery = window.matchMedia('(max-width: 767.98px)');
+    const tabletQuery = window.matchMedia('(min-width: 768px) and (max-width: 1199.98px)');
+    const desktopQuery = window.matchMedia('(min-width: 1200px)');
+
+    const handleMediaChange = () => {
+      updateCategory();
+    };
+
+    try {
+      mobileQuery.addEventListener('change', handleMediaChange);
+      tabletQuery.addEventListener('change', handleMediaChange);
+      desktopQuery.addEventListener('change', handleMediaChange);
+    } catch {
+      // Fallback for environments with legacy MediaQueryList
+      mobileQuery.addListener(handleMediaChange);
+      tabletQuery.addListener(handleMediaChange);
+      desktopQuery.addListener(handleMediaChange);
+    }
+
+    // Secondary throttled resize listener for fluid window drags, zoom, and orientation changes
+    let rAFId: number | null = null;
+    const handleResize = () => {
+      if (rAFId !== null) return;
+      rAFId = window.requestAnimationFrame(() => {
+        rAFId = null;
+        updateCategory();
+      });
+    };
+
+    window.addEventListener('resize', handleResize, { passive: true });
+    window.addEventListener('orientationchange', handleResize, { passive: true });
+
+    // Initial check on mount
+    updateCategory();
+
+    return () => {
+      try {
+        mobileQuery.removeEventListener('change', handleMediaChange);
+        tabletQuery.removeEventListener('change', handleMediaChange);
+        desktopQuery.removeEventListener('change', handleMediaChange);
+      } catch {
+        mobileQuery.removeListener(handleMediaChange);
+        tabletQuery.removeListener(handleMediaChange);
+        desktopQuery.removeListener(handleMediaChange);
+      }
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleResize);
+      if (rAFId !== null) {
+        cancelAnimationFrame(rAFId);
+      }
+    };
   }, []);
 
+  // Manual toggle handler:
+  // - Mobile (< 768px): Toggles the off-canvas drawer
+  // - Tablet & Desktop (>= 768px): Toggles between collapsed and expanded
   const handleToggleSidebar = () => {
-    userManuallyToggledRef.current = true;
-    setSidebarCollapsed((prev) => !prev);
+    if (screenCategory === 'mobile') {
+      setMobileDrawerOpen((prev) => !prev);
+    } else {
+      setSidebarCollapsed((prev) => !prev);
+    }
   };
 
   // Data states
@@ -89,9 +181,97 @@ export default function App() {
   const [aiHelpModalOpen, setAiHelpModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  // Authentication State:
+  // - Checked on mount. Defaults to true so dashboard is immediately previewable,
+  //   unless user explicitly logs out (which stores 'false' in localStorage).
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('medikiosk_authenticated');
+      if (stored === 'false') return false;
+      return true;
+    }
+    return true;
+  });
+
+  const [authInitialMode, setAuthInitialMode] = useState<'signin' | 'signup'>('signin');
+
+  // Full-Page View Navigation State:
+  // - 'dashboard': Default patient dashboard with sidebar, current treatment, etc.
+  // - 'consultation': Dedicated full-page AI consultation intake experience (/consultation)
+  const [currentView, setCurrentView] = useState<'dashboard' | 'consultation'>(() => {
+    if (typeof window !== 'undefined' && window.location.pathname.startsWith('/consultation')) {
+      return 'consultation';
+    }
+    return 'dashboard';
+  });
+
+  React.useEffect(() => {
+    const handlePopState = () => {
+      if (typeof window !== 'undefined') {
+        if (window.location.pathname.startsWith('/consultation')) {
+          setCurrentView('consultation');
+        } else {
+          setCurrentView('dashboard');
+        }
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const navigateToConsultation = () => {
+    setCurrentView('consultation');
+    if (typeof window !== 'undefined' && window.location.pathname !== '/consultation') {
+      window.history.pushState(null, '', '/consultation');
+    }
+  };
+
+  const navigateToDashboard = () => {
+    setCurrentView('dashboard');
+    if (typeof window !== 'undefined' && window.location.pathname !== '/') {
+      window.history.pushState(null, '', '/');
+    }
+  };
+
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3500);
+  };
+
+  // Authentication Handlers
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('medikiosk_authenticated', 'false');
+      if (window.location.pathname !== '/') {
+        window.history.pushState(null, '', '/');
+      }
+    }
+    setAuthInitialMode('signin');
+    setMobileDrawerOpen(false);
+    setProfileModalOpen(false);
+    setAiHelpModalOpen(false);
+    setConsultationModalOpen(false);
+    setSelectedEpisode(null);
+    setSelectedDocument(null);
+    setSelectedAppointment(null);
+    setCurrentView('dashboard');
+    showToast('You have been logged out securely.');
+  };
+
+  const handleLoginSuccess = (payload: AuthSuccessPayload) => {
+    setIsAuthenticated(true);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('medikiosk_authenticated', 'true');
+    }
+    setActiveTab('home');
+    setCurrentView('dashboard');
+    showToast(`Welcome back, ${payload.name || 'Rahul Verma'}! Session authenticated.`);
+  };
+
+  const handleConsultationSaved = (newEpisode: MedicalEpisode, intake: ConsultationIntake) => {
+    setEpisodes((prev) => [newEpisode, ...prev]);
+    showToast(`Consultation for ${newEpisode.condition} saved to your health record!`);
   };
 
   // Primary active treatment episode (Jaundice 2026)
@@ -163,6 +343,45 @@ export default function App() {
     showToast(`"${newDoc.title}" uploaded & scanned to your health records!`);
   };
 
+  // 1. Dedicated Authentication Gate:
+  // If user is not authenticated, render the premium AuthPage
+  if (!isAuthenticated) {
+    return (
+      <div className="relative min-h-screen">
+        <AuthPage
+          onLoginSuccess={handleLoginSuccess}
+          initialMode={authInitialMode}
+        />
+        {toastMessage && (
+          <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-top duration-200 bg-[#4C499E] text-white text-xs font-semibold px-5 py-3 rounded-full shadow-2xl border border-white/20 flex items-center gap-2">
+            <span>✨</span>
+            <span>{toastMessage}</span>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // 2. If user is currently on the dedicated full-page consultation experience:
+  if (currentView === 'consultation') {
+    return (
+      <div className="relative min-h-screen">
+        <ConsultationPage
+          patient={PATIENT_DATA}
+          currentEpisodes={episodes}
+          onBackToDashboard={navigateToDashboard}
+          onConsultationSaved={handleConsultationSaved}
+        />
+        {toastMessage && (
+          <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-top duration-200 bg-[#4C499E] text-white text-xs font-semibold px-5 py-3 rounded-full shadow-2xl border border-white/20 flex items-center gap-2">
+            <span>✨</span>
+            <span>{toastMessage}</span>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div
       id="medikiosk-root"
@@ -176,16 +395,32 @@ export default function App() {
         </div>
       )}
 
-      {/* Left Collapsible Floating Sidebar */}
-      <div className="pl-2.5 sm:pl-3 py-2.5 sm:py-3 flex-shrink-0 z-30">
+      {/* Mobile Off-Canvas Sidebar Drawer */}
+      <MobileSidebarDrawer
+        isOpen={mobileDrawerOpen}
+        onClose={() => setMobileDrawerOpen(false)}
+        activeTab={activeTab}
+        onTabChange={(tab) => {
+          setActiveTab(tab);
+          setMobileDrawerOpen(false);
+        }}
+        onHelpClick={() => {
+          setMobileDrawerOpen(false);
+          setAiHelpModalOpen(true);
+        }}
+        onLogoutClick={handleLogout}
+      />
+
+      {/* Desktop & Tablet Sidebar (Hidden on mobile < md, visible on tablet & desktop) */}
+      <div className="hidden md:block pl-2.5 sm:pl-3 py-2.5 sm:py-3 flex-shrink-0 z-30">
         <Sidebar
           activeTab={activeTab}
           onTabChange={setActiveTab}
           onHelpClick={() => setAiHelpModalOpen(true)}
-          onLogoutClick={() => showToast('Session locked. Re-authenticate via ABHA pin to continue.')}
+          onLogoutClick={handleLogout}
           collapsed={sidebarCollapsed}
           onToggleCollapse={handleToggleSidebar}
-          isMobileOverlay={isMobileScreen}
+          isMobileOverlay={false}
         />
       </div>
 
@@ -201,7 +436,7 @@ export default function App() {
         />
 
         {/* LAYER 2 & DASHBOARD CONTENT SHELL */}
-        <main className="flex-1 px-4 sm:px-6 md:px-8 py-6 sm:py-7 overflow-y-auto">
+        <main className="flex-1 px-3.5 xs:px-4 sm:px-6 md:px-8 py-4 sm:py-7 overflow-y-auto max-w-full overflow-x-hidden">
           {/* TAB: HOME (Exact match to reference image) */}
           {activeTab === 'home' && (
             <div className="space-y-6 md:space-y-7 pb-6">
@@ -220,7 +455,7 @@ export default function App() {
 
               {/* Main Card 2 — NEW CONSULTATION */}
               <NewConsultationCard
-                onStartConsultation={() => setConsultationModalOpen(true)}
+                onStartConsultation={navigateToConsultation}
               />
 
               {/* Main Section 3 — HEALTH TIMELINE / MEDICAL HISTORY */}
@@ -255,7 +490,7 @@ export default function App() {
               <MyHealthView
                 episodes={episodes}
                 onSelectEpisode={(ep) => setSelectedEpisode(ep)}
-                onStartConsultation={() => setConsultationModalOpen(true)}
+                onStartConsultation={navigateToConsultation}
               />
             </div>
           )}
@@ -276,7 +511,7 @@ export default function App() {
             <div className="mt-4 pb-6">
               <PrescriptionsView
                 prescriptions={allPrescriptions}
-                onStartConsultation={() => setConsultationModalOpen(true)}
+                onStartConsultation={navigateToConsultation}
               />
             </div>
           )}
@@ -287,7 +522,7 @@ export default function App() {
               <AppointmentsView
                 appointments={appointments}
                 onSelectAppointment={(apt) => setSelectedAppointment(apt)}
-                onBookNew={() => setConsultationModalOpen(true)}
+                onBookNew={navigateToConsultation}
               />
             </div>
           )}
@@ -300,6 +535,7 @@ export default function App() {
                   patient={PATIENT_DATA}
                   isOpen={true}
                   onClose={() => setActiveTab('home')}
+                  onLogout={handleLogout}
                 />
               </div>
             </div>
@@ -357,6 +593,7 @@ export default function App() {
           patient={PATIENT_DATA}
           isOpen={profileModalOpen}
           onClose={() => setProfileModalOpen(false)}
+          onLogout={handleLogout}
         />
       )}
 
@@ -367,7 +604,7 @@ export default function App() {
           onClose={() => setAiHelpModalOpen(false)}
           onStartConsultation={() => {
             setAiHelpModalOpen(false);
-            setConsultationModalOpen(true);
+            navigateToConsultation();
           }}
         />
       )}

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 56" width="250" height="56" fill="none">
+  <g transform="translate(4, 5)">
+    <path d="M25 7.6C23.2 3.8 19.2 1.5 14.8 1.5C7.2 1.5 1.5 7.6 1.5 15.2C1.5 26.5 21.6 41.5 23.6 43C24.4 43.6 25.6 43.6 26.4 43C28.4 41.5 48.5 26.5 48.5 15.2C48.5 7.6 42.8 1.5 35.2 1.5C30.8 1.5 26.8 3.8 25 7.6Z" fill="#5649D8"/>
+    <path d="M16 20H34M25 11V29" stroke="#FFFFFF" stroke-width="4.8" stroke-linecap="round"/>
+  </g>
+  <text x="64" y="36" font-family="Plus Jakarta Sans, -apple-system, sans-serif" font-size="30" font-weight="600" letter-spacing="-0.02em" fill="#1C1844">MediKiosk</text>
+</svg>

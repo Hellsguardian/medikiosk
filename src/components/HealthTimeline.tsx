@@ -85,7 +85,7 @@ export const HealthTimeline: React.FC<HealthTimelineProps> = ({
   return (
     <div
       id="medical-history-section"
-      className="relative w-full bg-white rounded-[26px] p-6 sm:p-7 lg:p-8 border border-[#504BA0]/[0.08] shadow-[0_8px_30px_rgba(70,65,150,0.06)] overflow-hidden transition-all"
+      className="relative w-full bg-white rounded-[20px] sm:rounded-[26px] p-4.5 xs:p-5 sm:p-7 lg:p-8 border border-[#504BA0]/[0.08] shadow-[0_8px_30px_rgba(70,65,150,0.06)] overflow-hidden transition-all"
     >
       {/* ──────────────────────────────────────────────────────────── */}
       {/* SUBTLE AMBIENT LAVENDER GLOW & BACKGROUND DETAIL */}

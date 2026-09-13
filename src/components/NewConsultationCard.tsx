@@ -273,10 +273,88 @@ export const NewConsultationCard: React.FC<NewConsultationCardProps> = ({
       </div>
 
       {/* ──────────────────────────────────────────────────────────── */}
-      {/* LAYER 3: FOREGROUND CONTENT (TWO-PART CLEAN BANNER)           */}
-      {/* Left info, right CTA, with spacious center for illustration  */}
+      {/* MOBILE SPECIFIC LAYOUT (< 768px): STRICT ISOLATED HIERARCHY */}
       {/* ──────────────────────────────────────────────────────────── */}
-      <div className="relative z-10 w-full h-full flex flex-col md:flex-row md:items-center justify-between gap-4 py-3.5 sm:py-0 pointer-events-auto">
+      <div className="relative z-10 w-full flex flex-col gap-3 py-4 md:hidden">
+        {/* 1. Stethoscope Icon & Eyebrow */}
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-white/75 border border-[#E85A9F]/15 text-[#E85A9F] flex items-center justify-center shadow-xs flex-shrink-0">
+            <Stethoscope className="w-5 h-5 text-[#E85A9F]" strokeWidth={1.9} />
+          </div>
+          <div>
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] font-bold tracking-wider uppercase text-[#E85A9F]">
+                HAVE A NEW HEALTH CONCERN?
+              </span>
+              <Sparkles className="w-3 h-3 text-[#E85A9F]/70" />
+            </div>
+            <h3 className="text-base font-bold text-[#2E2C3A] tracking-tight leading-snug">
+              Start a New Consultation
+            </h3>
+          </div>
+        </div>
+
+        {/* 2. Description */}
+        <p className="text-xs text-[#777895] leading-relaxed">
+          Tell us what&apos;s bothering you and we&apos;ll help prepare your consultation.
+        </p>
+
+        {/* 3. Example Pill */}
+        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/80 text-xs text-[#777895] border border-[#E85A9F]/12 shadow-2xs self-start">
+          <span className="font-semibold text-[#E85A9F] text-[10.5px]">Example:</span>
+          <span className="italic text-[11px] text-[#2E2C3A]/90">
+            &ldquo;I&apos;ve had abdominal pain for 4 days.&rdquo;
+          </span>
+        </div>
+
+        {/* 4. Dedicated Centered Nurse Illustration */}
+        <div
+          aria-hidden="true"
+          className="relative flex items-center justify-center my-1 py-1 pointer-events-none select-none"
+        >
+          <div
+            className="absolute w-36 h-36 rounded-full blur-xl pointer-events-none"
+            style={{
+              background:
+                'radial-gradient(circle, rgba(232, 90, 159, 0.18) 0%, rgba(204, 118, 172, 0.10) 55%, transparent 75%)',
+            }}
+          />
+          <div
+            className="relative h-32 w-32 flex items-center justify-center"
+            style={{
+              maskImage:
+                'radial-gradient(circle at 50% 48%, black 50%, rgba(0,0,0,0.85) 75%, transparent 100%)',
+              WebkitMaskImage:
+                'radial-gradient(circle at 50% 48%, black 50%, rgba(0,0,0,0.85) 75%, transparent 100%)',
+            }}
+          >
+            <img
+              src="/assets/nurse2.png"
+              alt="Healthcare Assistant"
+              className="h-full w-full object-cover object-[53%_top]"
+            />
+          </div>
+        </div>
+
+        {/* 5. Full Width Action CTA Button */}
+        <button
+          id="mobile-start-new-consultation-btn"
+          onClick={onStartConsultation}
+          className="w-full h-11 rounded-xl text-white font-semibold text-xs shadow-[0_6px_18px_rgba(232,90,159,0.24)] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
+          style={{
+            background: 'linear-gradient(135deg, #E85A9F 0%, #D84E93 100%)',
+          }}
+        >
+          <Plus className="w-4 h-4" strokeWidth={2.5} />
+          <span>Start New Consultation</span>
+          <ArrowRight className="w-4 h-4" strokeWidth={2} />
+        </button>
+      </div>
+
+      {/* ──────────────────────────────────────────────────────────── */}
+      {/* TABLET & DESKTOP FOREGROUND CONTENT (UNTOUCHED & LOCKED)     */}
+      {/* ──────────────────────────────────────────────────────────── */}
+      <div className="relative z-10 w-full h-full hidden md:flex md:items-center justify-between gap-4 py-3.5 sm:py-0 pointer-events-auto">
         {/* ── LEFT: CONSULTATION INFORMATION ── */}
         <div className="flex items-center gap-4 sm:gap-5 max-w-[330px] sm:max-w-[370px] lg:max-w-[410px] xl:max-w-[450px] z-10">
           {/* Stethoscope Icon in Soft Pink Container */}

@@ -1,5 +1,45 @@
 import React from 'react';
 
+export const MediKioskGlassBadge: React.FC<{ className?: string }> = ({ className = '' }) => (
+  <div
+    id="medikiosk-glass-branding-box"
+    className={`inline-flex items-center gap-2 sm:gap-2.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-[13px] sm:rounded-[14px] bg-white/60 backdrop-blur-md border border-white/50 shadow-[0_4px_20px_rgba(28,24,68,0.06),0_1px_1px_rgba(255,255,255,0.75)_inset] select-none pointer-events-none transition-all duration-200 ${className}`}
+    style={{
+      backdropFilter: 'blur(10px)',
+      WebkitBackdropFilter: 'blur(10px)',
+    }}
+  >
+    {/* Heart + medical cross logo */}
+    <div className="relative shrink-0 flex items-center justify-center">
+      <svg
+        viewBox="0 0 50 46"
+        className="w-[23px] h-[21px] sm:w-[25px] sm:h-[23px]"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        {/* Symmetrical Heart */}
+        <path
+          d="M25 7.6C23.2 3.8 19.2 1.5 14.8 1.5C7.2 1.5 1.5 7.6 1.5 15.2C1.5 26.5 21.6 41.5 23.6 43C24.4 43.6 25.6 43.6 26.4 43C28.4 41.5 48.5 26.5 48.5 15.2C48.5 7.6 42.8 1.5 35.2 1.5C30.8 1.5 26.8 3.8 25 7.6Z"
+          fill="#5649D8"
+        />
+        {/* Mathematically centered white plus */}
+        <path
+          d="M16 20H34M25 11V29"
+          stroke="#FFFFFF"
+          strokeWidth="4.8"
+          strokeLinecap="round"
+        />
+      </svg>
+    </div>
+    {/* MediKiosk Clean Modern Semi-Bold Typography */}
+    <span className="text-[16px] sm:text-[17px] font-semibold text-[#1C1844] tracking-[-0.02em] leading-none whitespace-nowrap">
+      MediKiosk
+    </span>
+  </div>
+);
+
+export const MediKioskBrandLogo = MediKioskGlassBadge;
+
 export const MediKioskLogo: React.FC<{ className?: string }> = ({ className = 'w-8 h-8' }) => (
   <svg className={className} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
     {/* Soft glowing healthcare cross & leaf hybrid */}

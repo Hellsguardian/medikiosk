@@ -10,6 +10,7 @@ import {
   Share2,
   Copy,
   Check,
+  LogOut,
 } from 'lucide-react';
 import { PatientProfile } from '../types';
 
@@ -17,12 +18,14 @@ interface ProfileModalProps {
   patient: PatientProfile;
   isOpen: boolean;
   onClose: () => void;
+  onLogout?: () => void;
 }
 
 export const ProfileModal: React.FC<ProfileModalProps> = ({
   patient,
   isOpen,
   onClose,
+  onLogout,
 }) => {
   const [copied, setCopied] = React.useState(false);
 
@@ -165,12 +168,26 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
 
         {/* Footer */}
         <div className="p-4 px-6 bg-mk-surface-secondary border-t border-mk-border flex items-center justify-between">
-          <div className="text-xs text-mk-text-muted">
-            Profile synchronized with National Health Authority
-          </div>
+          {onLogout ? (
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                onLogout();
+              }}
+              className="flex items-center gap-1.5 text-xs font-semibold text-[#D93856] hover:text-[#B0203B] hover:bg-[#FDECEF] px-3 py-1.5 rounded-xl border border-[#F5CCD3] transition cursor-pointer"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Log out</span>
+            </button>
+          ) : (
+            <div className="text-xs text-mk-text-muted">
+              Profile synchronized with ABDM
+            </div>
+          )}
           <button
             onClick={onClose}
-            className="px-5 py-2 rounded-xl bg-mk-primary hover:bg-mk-primary-hover text-white text-xs font-semibold transition"
+            className="px-5 py-2 rounded-xl bg-mk-primary hover:bg-mk-primary-hover text-white text-xs font-semibold transition cursor-pointer"
           >
             Done
           </button>
